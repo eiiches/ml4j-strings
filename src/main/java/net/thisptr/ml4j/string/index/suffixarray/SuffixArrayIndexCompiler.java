@@ -20,7 +20,6 @@ import org.slf4j.LoggerFactory;
  * 
  */
 public final class SuffixArrayIndexCompiler {
-	private static Logger log = LoggerFactory.getLogger(SuffixArrayIndexCompiler.class);
 	private static final int EMPTY = -1;
 
 	@Specialize("T: int, char")
@@ -147,8 +146,6 @@ public final class SuffixArrayIndexCompiler {
 			if (ssai0 < ssai1 || ssai0 == ssai1 && bucketEndIndices[ssai0] <= i) // if (isS(seq, sai - 1))
 				sa.set(--bucketEndIndices[ssai0], sai - 1);
 		}
-
-		log.debug("induceSortS(): end, sa = {}", sa);
 	}
 
 	/**
@@ -178,20 +175,13 @@ public final class SuffixArrayIndexCompiler {
 			if (ssai0 >= ssai1)
 				sa.set(bucketIndices[ssai0]++, sai - 1);
 		}
-
-		log.debug("induceSortL(): end, sa = {}", sa);
 	}
 
 	@Specialize("T: int, char")
 	private static void sais(final Array<T> seq, final Array<$int> sa, final int alphabetSize) {
-		log.info("sais(): satrt, n = {}", seq.size());
-		log.debug("sais(): start, n = {}, seq = {}", seq.size(), seq);
-
 		final int n = seq.size();
-		if (n == 0) {
-			log.debug("sais(): len(s) == 0, end");
+		if (n == 0)
 			return;
-		}
 
 		ArrayUtils.fill(sa, EMPTY);
 
@@ -210,7 +200,6 @@ public final class SuffixArrayIndexCompiler {
 				}
 			});
 		}
-		log.debug("lms into bucket: sa = {}", sa);
 
 		/* Step-2: induce sort all the L-type LMS-prefixes */
 		induceSortL(seq, counts, sa);
@@ -227,16 +216,11 @@ public final class SuffixArrayIndexCompiler {
 		}
 		final int n1 = _n1;
 
-		if (n1 == 0) {
-			log.debug("sais(): len(s1) == 0, end");
+		if (n1 == 0)
 			return;
-		}
 
 		/* initialize the name array buffer */
 		ArrayUtils.fill(sa, n1, n1 + n / 2, EMPTY);
-
-		log.debug("compact lms chars: sa = {}", sa);
-		log.debug("reduced problem is: length = {}", n1);
 
 		/* store the length of all substring */
 		forEachLmsReversed(seq, new IndexVisitor() {
@@ -248,8 +232,6 @@ public final class SuffixArrayIndexCompiler {
 				nextIndex = index;
 			}
 		}, true);
-
-		log.debug("lengths stored: sa = {}", sa);
 
 		int nNames = 0;
 		/* find the lexicographic names of all substrings */{
@@ -267,15 +249,10 @@ public final class SuffixArrayIndexCompiler {
 			}
 		}
 
-		log.debug("id's assigned: sa = {}", sa);
-
 		// move over names to left into range [n1, 2 * n1).
 		for (int i = n1, j = n1; i < n1 + n / 2; ++i)
 			if (sa.at(i) != EMPTY)
 				sa.set(j++, sa.at(i));
-
-		log.debug("id's compacted: sa = {}", sa);
-		log.debug("reduced problem is: alphabetSize = {}", nNames);
 
 		/*
 		 * stage 2: solve the reduced problem, recurse if names are not yet unique. in this recursion eventually names will be unique.
@@ -290,9 +267,6 @@ public final class SuffixArrayIndexCompiler {
 				sa.set(sa.at(n1 + i), i);
 		}
 
-		if (log.isDebugEnabled())
-			log.debug("reduced problem: sa = {}", sa.view(0, n1));
-
 		/*
 		 * stage 3: Induce the result for the original problem.
 		 */
@@ -306,16 +280,10 @@ public final class SuffixArrayIndexCompiler {
 			}
 		});
 
-		log.debug("unsorted lms: sa = {}", sa);
-
 		for (int i = 0; i < n1; ++i)
 			sa.set(i, sa.at(sa.at(i) + n1));
 
-		log.debug("sort lms: sa = {}", sa);
-
 		ArrayUtils.fill(sa, n1, n, EMPTY);
-
-		log.debug("clear space: sa = {}", sa);
 
 		/* sorted prefixes into their bucket */{
 			final int[] bucketEndIndices = buildBucketEndIndices(counts);
@@ -326,13 +294,8 @@ public final class SuffixArrayIndexCompiler {
 			}
 		}
 
-		log.debug("lms into bucket: sa = {}", sa);
-
 		induceSortL(seq, counts, sa);
 		induceSortS(seq, counts, sa);
-
-		log.debug("sais(): end");
-		log.info("sais(): end, n = {}", n);
 	}
 
 	@Specialize("T: int, char")
