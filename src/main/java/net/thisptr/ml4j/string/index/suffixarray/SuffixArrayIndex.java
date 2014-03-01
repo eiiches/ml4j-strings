@@ -67,8 +67,8 @@ public class SuffixArrayIndex implements StringIndex {
 	}
 
 	@Override
-	public Iterator<$int> search(final CharSequence needle) {
-		return new Iterator<$int>() {
+	public Iterator<Integer> search(final CharSequence needle) {
+		return new Iterator<Integer>() {
 			private int cursor = bsearch(needle);
 			private boolean fresh = true;
 
@@ -90,7 +90,7 @@ public class SuffixArrayIndex implements StringIndex {
 			}
 
 			@Override
-			public int next() {
+			public Integer next() {
 				if (!hasNext())
 					throw new NoSuchElementException();
 

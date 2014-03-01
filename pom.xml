@@ -77,12 +77,6 @@
 			<artifactId>specialize-java</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
-		<dependency>
-			<groupId>net.thisptr</groupId>
-			<artifactId>specialize-java-rt</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-			<scope>compile</scope>
-		</dependency>
 
 		<!-- logging -->
 		<dependency>

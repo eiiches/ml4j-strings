@@ -32,7 +32,7 @@ public class SuffixArrayIndexCompilerTest {
 				2, // racadabra
 		};
 		assertArrayEquals(expected, index.raw());
-		Iterator<$int> iter = index.search("ab");
+		Iterator<Integer> iter = index.search("ab");
 		while (iter.hasNext()) {
 			final int i = iter.next();
 			System.out.println(i);
